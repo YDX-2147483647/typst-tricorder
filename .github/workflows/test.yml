@@ -35,6 +35,7 @@ jobs:
         with:
           typst-version: ${{ matrix.typst-version.typst }}
 
+      - run: just setup
       - run: just test
 
       - name: Archive test results

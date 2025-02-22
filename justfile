@@ -9,6 +9,11 @@ export TYPST_FONT_PATHS := join(root, "fonts")
 default:
   @just --list --unsorted
 
+# Set up the project (typically run after git clone)
+setup:
+  cd fonts && curl --location --remote-name https://mirrors.cernet.edu.cn/adobe-fonts/source-han-serif/OTF/SimplifiedChinese/SourceHanSerifSC-Regular.otf
+  cd fonts && sha256sum --check fonts.sha256
+
 # Generate manual
 doc:
   typst compile docs/manual.typ docs/manual.pdf

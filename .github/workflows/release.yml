@@ -18,6 +18,7 @@ jobs:
         with:
           tool: just
       - uses: typst-community/setup-typst@v3
+      - run: just setup
 
       - name: Determine and check package metadata
         run: |
