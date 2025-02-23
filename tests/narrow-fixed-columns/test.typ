@@ -3,4 +3,4 @@
 
 #show: project.with(page-width: auto)
 
-#tricorder(columns: 4, names)
+#tricorder(columns: 4, ..names)

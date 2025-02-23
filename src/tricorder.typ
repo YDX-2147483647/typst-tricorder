@@ -62,7 +62,9 @@
   result
 }
 
-#let tricorder(columns: auto, column-gutter: 1em, row-gutter: 1em, names) = {
+#let tricorder(columns: auto, column-gutter: 1em, row-gutter: 1em, ..names) = {
+  assert(names.named().len() == 0)
+  let names = names.pos()
   assert(columns == auto or (type(columns) == int and columns > 0))
 
   let spans-and-names = names.map(fill-name).map(n => (measure-span(n, column-gutter), n))

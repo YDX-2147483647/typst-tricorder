@@ -3,4 +3,4 @@
 
 #show: project.with(page-width: 40em)
 
-#tricorder(column-gutter: 1.5em, names)
+#tricorder(column-gutter: 1.5em, ..names)
