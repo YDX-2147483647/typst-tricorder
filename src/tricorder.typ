@@ -18,25 +18,26 @@
   }
 }
 
-/// Measure the number of cells
+/// Measure the number of cells that will be occupied by the `name`
 ///
 /// - name (str):
+/// - column-gutter (length):
 /// -> int
-#let measure-width(name) = {
+#let measure-span(name, column-gutter) = {
   let len = name
     .clusters()
     // TODO: Hard-coded
     .map(c => if "·，（）".contains(c) {
-      1 / 2
-    } else { 1 })
+      0.5em
+    } else { 1em })
     .sum()
 
-  calc.ceil((len + 1) / 4)
+  calc.ceil((len + column-gutter) / (3em + column-gutter))
 }
 
 /// Put blocks before a wall
-/// - blocks (array):
-/// - wall (int):
+/// - blocks (array): A list of (span, content)
+/// - wall (int): Number of available cells in each row
 /// -> array
 #let put-before-wall(blocks, wall) = {
   let result = ()
@@ -47,10 +48,9 @@
     assert(width <= wall, message: "impossible to place such a long block: " + repr((width, value)))
 
     if width > rest {
-      // Fill the rest space with empty blocks and start a new row
-      for _ in array.range(rest) {
-        result.push((1, none))
-      }
+      // Fill the rest space with empty blocks
+      if rest > 0 { result.push((rest, none)) }
+      // Start a new row
       rest = wall
     }
 
@@ -62,19 +62,30 @@
   result
 }
 
-#let tricorder(columns: 0, names) = {
-  assert(columns > 0)
+#let tricorder(columns: auto, column-gutter: 1em, row-gutter: 1em, names) = {
+  assert(columns == auto or (type(columns) == int and columns > 0))
 
-  let spans-and-names = names.map(fill-name).map(n => (measure-width(n), n))
+  let spans-and-names = names.map(fill-name).map(n => (measure-span(n, column-gutter), n))
 
   // TODO: Hard-coded
   show "（": it => h(-0.5em) + it
   show regex("[，）]"): it => it + h(-0.5em)
 
-  grid(
-    columns: (3em,) * columns,
-    gutter: 1em,
-    align: start,
-    ..put-before-wall(spans-and-names, columns).map(((span, name)) => grid.cell(colspan: span, name))
-  )
+  if columns == auto {
+    // Auto columns
+    set par(leading: row-gutter)
+    spans-and-names
+      .map(((span, name)) => box(width: (3em + column-gutter) * span - column-gutter, name))
+      .intersperse(h(column-gutter, weak: true))
+      .join()
+  } else {
+    // Fixed columns
+    grid(
+      columns: (3em,) * columns,
+      column-gutter: column-gutter,
+      row-gutter: row-gutter,
+      align: start,
+      ..put-before-wall(spans-and-names, columns).map(((span, name)) => grid.cell(colspan: span, name))
+    )
+  }
 }

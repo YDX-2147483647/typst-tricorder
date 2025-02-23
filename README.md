@@ -11,4 +11,4 @@ Record Chinese names with a rhythm of three characters.
 #import "@preview/tricorder:0.1.0": *
 ```
 
-![](./tests/test1/ref/1.png)
+![](./tests/narrow-auto-columns/ref/1.png)

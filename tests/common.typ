@@ -1,12 +1,19 @@
-#import "/src/lib.typ": tricorder
+/// Template
+///
+/// Usage: `#show: project.with(page-width: …)`
+#let project(page-width: 0em, body) = {
+  assert(page-width != 0em, message: "page width must be set explicitly")
 
-#set page(width: auto, height: auto, margin: 2em)
-#set text(lang: "zh", region: "CN", font: "Source Han Serif SC")
+  set page(width: page-width, height: auto, margin: 2em)
+  set text(lang: "zh", region: "CN", font: "Source Han Serif SC")
 
-// 《人民日报》2012年11月8日头版右侧主席团名单
-// 图：https://reader.jojokanbao.cn/rmrb/20121108
-// 文：http://www.beijingreview.com.cn/18da/txt/2012-11/08/content_498144.htm
-#let names = (
+  body
+}
+
+/// Fixture:《人民日报》2012年11月8日头版右侧主席团名单
+/// 图：https://reader.jojokanbao.cn/rmrb/20121108
+/// 文：http://www.beijingreview.com.cn/18da/txt/2012-11/08/content_498144.htm
+#let renmin-ribao = (
   // …
   "马馼（女）",
   "马凯",
@@ -43,5 +50,3 @@
   "朱小丹",
   // …
 )
-
-#tricorder(columns: 4, names)
