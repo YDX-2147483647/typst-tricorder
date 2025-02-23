@@ -75,11 +75,18 @@
 
   if columns == auto {
     // Auto columns
-    set par(leading: row-gutter)
-    spans-and-names
-      .map(((span, name)) => box(width: (3em + column-gutter) * span - column-gutter, name))
-      .intersperse(h(column-gutter, weak: true))
-      .join()
+    block({
+      set par(leading: row-gutter)
+
+      // The whole block can be arbitrarily aligned,
+      // but its last line is always aligned left.
+      set align(start)
+
+      spans-and-names
+        .map(((span, name)) => box(width: (3em + column-gutter) * span - column-gutter, name))
+        .intersperse(h(column-gutter, weak: true))
+        .join()
+    })
   } else {
     // Fixed columns
     grid(
