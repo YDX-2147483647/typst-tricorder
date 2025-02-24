@@ -33,7 +33,7 @@
     } else { 1em })
     .sum()
 
-  let span = calc.ceil((len + column-gutter - 1em) / (3em + column-gutter))
+  let span = 1 + calc.floor(len / (3em + column-gutter))
   (
     span: span,
     overflow: span != calc.ceil((len + column-gutter) / (3em + column-gutter)),
