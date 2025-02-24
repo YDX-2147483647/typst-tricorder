@@ -4,6 +4,7 @@ name: Release
 on:
   push:
     tags: [ v* ]
+  workflow_dispatch:
 
 env:
   REGISTRY_REPO: YDX-2147483647/packages
@@ -14,9 +15,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # To determine $REF_NAME
+          fetch-depth: 0
       - uses: taiki-e/install-action@v2
         with:
-          tool: just
+          tool: just,tytanic
       - uses: typst-community/setup-typst@v3
       - uses: actions/cache@v4
         with:
@@ -33,8 +37,9 @@ jobs:
           echo "PKG_NAME=${PKG_PREFIX}" >> "${GITHUB_ENV}"
           echo "PKG_VERSION=${VERSION}" >> "${GITHUB_ENV}"
 
-          if [[ "${GITHUB_REF_NAME}" != "v${VERSION}" ]]; then
-            echo "package version ${VERSION} does not match release tag ${GITHUB_REF_NAME}" >&2
+          REF_NAME=$(git describe --tags --abbrev=0)
+          if [[ "${REF_NAME}" != "v${VERSION}" ]]; then
+            echo "package version ${VERSION} does not match the latest tag ${REF_NAME}" >&2
             exit 1
           fi
 
