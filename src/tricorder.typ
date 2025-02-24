@@ -22,7 +22,8 @@
 ///
 /// - name (str):
 /// - column-gutter (length):
-/// -> int
+/// -> span (int):
+/// -> overflow (bool):
 #let measure-span(name, column-gutter) = {
   let len = name
     .clusters()
@@ -32,11 +33,15 @@
     } else { 1em })
     .sum()
 
-  calc.ceil((len + column-gutter) / (3em + column-gutter))
+  let span = calc.ceil((len + column-gutter - 1em) / (3em + column-gutter))
+  (
+    span: span,
+    overflow: span != calc.ceil((len + column-gutter) / (3em + column-gutter)),
+  )
 }
 
 /// Put blocks before a wall
-/// - blocks (array): A list of (span, content)
+/// - blocks (array): A list of ((span, overflow), content)
 /// - wall (int): Number of available cells in each row
 /// -> array
 #let put-before-wall(blocks, wall) = {
@@ -44,19 +49,28 @@
   // Rest space to the wall
   let rest = wall
 
-  for (width, value) in blocks {
-    assert(width <= wall, message: "impossible to place such a long block: " + repr((width, value)))
+  for ((span, overflow), value) in blocks {
+    assert(
+      span + int(overflow) <= wall,
+      message: "impossible to place such a long block: (span: "
+        + repr(span)
+        + ", overflow: "
+        + repr(overflow)
+        + ", "
+        + repr(value)
+        + ")",
+    )
 
-    if width > rest {
+    if span + int(overflow) > rest {
       // Fill the rest space with empty blocks
-      if rest > 0 { result.push((rest, none)) }
+      if rest > 0 { result.push(((rest, false), none)) }
       // Start a new row
       rest = wall
     }
 
     // Put a block
-    result.push((width, value))
-    rest -= width
+    result.push(((span, overflow), value))
+    rest -= span
   }
 
   result
@@ -83,8 +97,16 @@
       set align(start)
 
       spans-and-names
-        .map(((span, name)) => box(width: (3em + column-gutter) * span - column-gutter, name))
-        .intersperse(h(column-gutter, weak: true))
+        .map((((span, overflow), name)) => (
+          // If not overflow, write `name` and a weak gutter.
+          // Otherwise, write `name` and the gutter into a single box.
+          box(
+            width: (3em + column-gutter) * span - if not overflow { column-gutter } else { 0em },
+            name,
+          ),
+          if not overflow { h(column-gutter, weak: true) } else { none },
+        ))
+        .flatten()
         .join()
     })
   } else {
@@ -94,7 +116,11 @@
       column-gutter: column-gutter,
       row-gutter: row-gutter,
       align: start,
-      ..put-before-wall(spans-and-names, columns).map(((span, name)) => grid.cell(colspan: span, name))
+      ..put-before-wall(spans-and-names, columns).map((((span, overflow), name)) => grid.cell(
+        colspan: span,
+        inset: if overflow { (right: -column-gutter) } else { (:) },
+        name,
+      ))
     )
   }
 }
