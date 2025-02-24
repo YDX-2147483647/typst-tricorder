@@ -62,14 +62,16 @@
     )
 
     if span + int(overflow) > rest {
-      // Fill the rest space with empty blocks
-      if rest > 0 { result.push(((rest, false), none)) }
+      if rest > 0 {
+        // Fill the rest space with empty blocks
+        result.push(((span: rest, overflow: false), none))
+      }
       // Start a new row
       rest = wall
     }
 
     // Put a block
-    result.push(((span, overflow), value))
+    result.push(((span: span, overflow: overflow), value))
     rest -= span
   }
 
@@ -81,11 +83,41 @@
   let names = names.pos()
   assert(columns == auto or (type(columns) == int and columns > 0))
 
-  let spans-and-names = names.map(fill-name).map(n => (measure-span(n, column-gutter), n))
+  // Convert `names` to a list of `((span, overflow), name)`
+
+  let default-span = (span: 1, overflow: false)
+  let spans-and-names = names
+    .map(n => if type(n) == str {
+      // Fill name for regular names
+      fill-name(n)
+    } else {
+      // Skip others
+      n
+    })
+    .map(n => if type(n) == str {
+      // Measure span for regular names
+      (measure-span(n, column-gutter), n)
+    } else if type(n) != array {
+      // Set default span for content-ish items
+      (default-span, n)
+    } else {
+      // Parse others
+      assert(
+        n.len() == 2
+          and type(n.first()) == dictionary
+          and (not n.first().keys().contains("span") or (type(n.first().span) == int and n.first().span > 0))
+          and (not n.first().keys().contains("overflow") or type(n.first().overflow) == bool),
+        message: "fail to parse as ((span, overflow), name): " + repr(n),
+      )
+      let (span, name) = n
+      (default-span + span, name)
+    })
 
   // TODO: Hard-coded
   show "（": it => h(-0.5em) + it
   show regex("[，）]"): it => it + h(-0.5em)
+
+  // Write out contents
 
   if columns == auto {
     // Auto columns
