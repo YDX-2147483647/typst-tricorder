@@ -18,6 +18,13 @@ jobs:
         with:
           tool: just
       - uses: typst-community/setup-typst@v3
+      - uses: actions/cache@v4
+        with:
+          path: |
+            fonts/*.otf
+          key: |
+            fonts-${{ hashFiles('fonts/fonts.sha256') }}
+            fonts-
       - run: just setup
 
       - name: Determine and check package metadata

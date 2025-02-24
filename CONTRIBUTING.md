@@ -4,7 +4,7 @@
 
 1. Install [typst](https://github.com/typst/typst/releases), [tytanic](https://tingerrr.github.io/tytanic/quickstart/install.html), and [just](https://just.systems/man/en/).
 2. Clone this repo.
-3. Run `just setup` to download fonts into [`fonts/`](./fonts/).
+3. Run `just setup` to set up the project, e.g., download fonts into [`fonts/`](./fonts/).
 
 ## Development
 
