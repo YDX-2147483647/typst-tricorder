@@ -2,9 +2,11 @@
 # https://github.com/typst-community/typst-package-template/blob/64726bec3bb0c664e8d7a1df4ed82d52a87465a7/.typstignore
 
 .github
+fonts
 scripts
 tests
 justfile
-# PDF manuals should be included so that they can be linked, but not their sources
-docs/*
-!docs/*.pdf
+CONTRIBUTING.md
+
+# Special treatment
+README.md

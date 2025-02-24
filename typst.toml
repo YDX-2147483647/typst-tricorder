@@ -12,3 +12,6 @@ categories = [
   "text",
   "languages",
 ]
+exclude = [
+  "assets",
+]

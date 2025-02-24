@@ -5,7 +5,6 @@ export TYPST_ROOT := root
 export TYPST_FONT_PATHS := join(root, "fonts")
 
 # List available recipes
-[private]
 default:
   @just --list --unsorted
 
@@ -14,10 +13,6 @@ setup:
   cd fonts && curl --location --remote-name https://mirrors.cernet.edu.cn/adobe-fonts/source-han-serif/OTF/SimplifiedChinese/SourceHanSerifSC-Regular.otf
   cd fonts && curl --location --remote-name https://mirrors.cernet.edu.cn/adobe-fonts/source-han-serif/OTF/SimplifiedChinese/SourceHanSerifSC-Bold.otf
   cd fonts && sha256sum --check fonts.sha256
-
-# Generate manual
-doc:
-  typst compile docs/manual.typ docs/manual.pdf
 
 # Run test suite
 test *args:
@@ -31,21 +26,18 @@ update *args:
 package target:
   ./scripts/package "{{target}}"
 
-# Install the library with the "@local" prefix
+# Install the library with the “@local” prefix
 install: (package "@local")
 
-# Install the library with the "@preview" prefix (for pre-release testing)
+# Install the library with the “@preview” prefix (for pre-release testing)
 install-preview: (package "@preview")
 
 [private]
 remove target:
   ./scripts/uninstall "{{target}}"
 
-# Uninstalls the library from the "@local" prefix
+# Uninstalls the library from the “@local” prefix
 uninstall: (remove "@local")
 
-# Uninstalls the library from the "@preview" prefix (for pre-release testing)
+# Uninstalls the library from the “@preview” prefix (for pre-release testing)
 uninstall-preview: (remove "@preview")
-
-# Run ci suite
-ci: test doc

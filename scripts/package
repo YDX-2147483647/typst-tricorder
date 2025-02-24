@@ -74,6 +74,12 @@ for f in "${files[@]}"; do
   cp -r "$ROOT/$f" "$TMP/$f"
 done
 
+# Special treatment for README
+cp "$ROOT/README.md" "$TMP/README.md"
+sed --in-place 's|./tests/readme/ref/|./assets/|g' "$TMP/README.md"
+mkdir -p "$TMP/assets/"
+cp "$ROOT/tests/readme/ref"/*.png "$TMP/assets/"
+
 TARGET="${TARGET:?}/${PKG_PREFIX:?}/${VERSION:?}"
 echo "Packaged to: $TARGET"
 if rm -r "${TARGET:?}" 2>/dev/null; then
