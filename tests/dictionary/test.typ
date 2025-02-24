@@ -3,7 +3,7 @@
 #import "/tests/common.typ": project
 #import "/src/lib.typ": tricorder
 
-#show: project.with(page-width: 23em)
+#show: project.with(page-width: 19em)
 
 #show heading.where(level: 1): set align(center)
 #show heading.where(level: 1): set text(1.25em)
@@ -63,7 +63,7 @@
   ),
 )
 
-#set page(width: 31em)
+#show: project.with(page-width: 27em)
 
 // https://ano-via.github.io/dict/images/0009.jpg
 = 编纂、修订工作人员

@@ -1,10 +1,17 @@
 /// Template
 ///
 /// Usage: `#show: project.with(page-width: …)`
+///
+/// - page-width (length, auto): Page width without margin (版心宽度)
 #let project(page-width: 0em, body) = {
   assert(page-width != 0em, message: "page width must be set explicitly")
 
-  set page(width: page-width, height: auto, margin: 2em)
+  let margin = 2em
+  set page(
+    width: if page-width == auto { auto } else { page-width + 2 * margin },
+    height: auto,
+    margin: margin,
+  )
   set text(lang: "zh", region: "CN", font: "Source Han Serif SC")
 
   body
